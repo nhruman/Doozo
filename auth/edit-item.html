@@ -1,0 +1,485 @@
+
+<!DOCTYPE html>
+<html lang="ja" id="html-tag">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>商品情報を編集 | Mottainai Connect</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+Bengali:wght@400;500;700&family=Noto+Sans:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Common CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+
+    <!-- Listing Form CSS -->
+    <link rel="stylesheet" href="../css/listing-forms.css">
+
+    <style>
+        /* Edit Page Additional Styles */
+
+        .edit-loading {
+            text-align: center;
+            padding: 30px;
+            color: #166534;
+        }
+
+        .edit-back-link {
+            display: inline-block;
+            margin-bottom: 18px;
+            color: #166534;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .edit-back-link:hover {
+            text-decoration: underline;
+        }
+
+        .current-photo-label {
+            display: block;
+            margin: 12px 0;
+            font-weight: 600;
+            color: #166534;
+        }
+
+        .photo-help {
+            display: block;
+            margin-top: 10px;
+            color: #666;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        #submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body class="lf-page">
+
+    <!-- Common Header -->
+    <div id="site-header"></div>
+
+
+    <!-- Page Introduction -->
+    <section class="lf-intro">
+        <div class="lf-intro-inner">
+
+            <h1>
+                商品情報を<br>
+                <em>編集しましょう。</em>
+            </h1>
+
+            <p>
+                商品情報を確認して、正しい内容に更新してください。
+            </p>
+
+        </div>
+    </section>
+
+
+    <!-- Main Content -->
+    <main class="lf-shell">
+
+        <div class="lf-layout">
+
+            <section class="lf-panel">
+
+                <div class="lf-panel-head">
+
+                    <h2>商品情報を編集する</h2>
+
+                    <p>「*」は必須項目です</p>
+
+                </div>
+
+
+                <!-- Back Link -->
+                <a href="profile.html" class="edit-back-link">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    マイページに戻る
+                </a>
+
+
+                <!-- Loading Message -->
+                <p id="edit-loading" class="edit-loading">
+                    商品情報を読み込んでいます...
+                </p>
+
+
+                <!-- Edit Form -->
+                <form id="edit-form" novalidate hidden>
+
+                    <!-- Product Name -->
+                    <div class="field">
+
+                        <label for="title">
+                            商品名 <b>*</b>
+                        </label>
+
+                        <input
+                            id="title"
+                            name="title"
+                            type="text"
+                            maxlength="90"
+                            required
+                            placeholder="例：小型冷蔵庫・自転車"
+                        >
+
+                    </div>
+
+
+                    <!-- Category and Condition -->
+                    <div class="row">
+
+                        <div class="field">
+
+                            <label for="category">
+                                カテゴリー <b>*</b>
+                            </label>
+
+                            <select
+                                id="category"
+                                name="category"
+                                required
+                            >
+
+                                <option value="">選択してください</option>
+
+                                <option value="electronics">家電・電子機器</option>
+                                <option value="clothing">衣類</option>
+                                <option value="books">本・教材</option>
+                                <option value="household">日用品</option>
+                                <option value="toy">おもちゃ・ベビー用品</option>
+                                <option value="furniture">家具</option>
+                                <option value="bedding">寝具</option>
+                                <option value="sports">スポーツ</option>
+                                <option value="hobby">趣味</option>
+                                <option value="indoor">植物・ガーデニング</option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="condition">
+                                商品の状態 <b>*</b>
+                            </label>
+
+                            <select
+                                id="condition"
+                                name="condition"
+                                required
+                            >
+
+                                <option value="">選択してください</option>
+
+                                <option value="new">新品・未使用</option>
+                                <option value="good">良好</option>
+                                <option value="used">使用感あり</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Price -->
+                    <div class="field">
+
+                        <label for="price">
+                            価格（税込・円） <b>*</b>
+                        </label>
+
+                        <div class="price-wrap">
+
+                            <span>¥</span>
+
+                            <input
+                                id="price"
+                                name="price"
+                                type="number"
+                                min="0"
+                                max="1000000"
+                                step="1"
+                                required
+                            >
+
+                        </div>
+
+                        <small id="price-hint">
+                            ¥0 は「無料」として出品されます。
+                        </small>
+
+                    </div>
+
+
+                    <!-- Location -->
+                    <div class="field">
+
+                        <label for="location">
+                            受け渡しエリア <b>*</b>
+                        </label>
+
+                        <input
+                            id="location"
+                            name="location"
+                            type="text"
+                            maxlength="100"
+                            required
+                            placeholder="例：横浜市西区・横浜駅周辺"
+                        >
+
+                        <small>
+                            自宅の住所は入力しないでください。
+                        </small>
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="field">
+
+                        <label for="description">
+                            商品説明 <b>*</b>
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="5"
+                            minlength="15"
+                            maxlength="1500"
+                            required
+                            placeholder="使用期間、サイズ、傷・不具合、受け渡し方法などを教えてください。"
+                        ></textarea>
+
+                        <small>
+                            <span id="description-count">0</span>
+                            / 1500 文字
+                        </small>
+
+                    </div>
+
+
+                    <!-- Product Images -->
+                    <div class="field">
+
+                        <label for="photos">
+                            商品写真
+                            <span class="muted">（最大5枚）</span>
+                        </label>
+
+                        <span class="current-photo-label">
+                            <i class="fa-solid fa-images"></i>
+                            現在の商品写真
+                        </span>
+
+                        <div
+                            id="photo-preview"
+                            class="previews"
+                            aria-live="polite"
+                        ></div>
+
+
+                        <label class="dropzone" for="photos">
+
+                            <strong>
+                                <i class="fa-solid fa-camera"></i>
+                                新しい写真を選ぶ
+                            </strong>
+
+                            <span>
+                                JPEG / PNG / WebP・1枚5MBまで
+                            </span>
+
+                        </label>
+
+                        <input
+                            class="sr-only"
+                            id="photos"
+                            name="photos"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            multiple
+                        >
+
+                        <small class="photo-help">
+                            新しい写真を選択しない場合、現在の写真がそのまま保存されます。
+                            新しい写真を選択した場合、現在の写真は新しい写真に入れ替わります。
+                        </small>
+
+                    </div>
+
+
+                    <!-- Agreement -->
+                    <label class="check">
+
+                        <input
+                            id="agreement"
+                            type="checkbox"
+                            required
+                        >
+
+                        <span>
+                            商品の状態と受け渡し条件を正しく記載しました。
+                        </span>
+
+                    </label>
+
+
+                    <!-- Form Message -->
+                    <p
+                        id="form-message"
+                        class="message"
+                        role="status"
+                        aria-live="polite"
+                    ></p>
+
+
+                    <!-- Submit Button -->
+                    <button
+                        id="submit-button"
+                        class="primary"
+                        type="submit"
+                    >
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        変更を保存する
+
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- Side Information -->
+            <aside class="lf-side">
+
+                <div class="lf-tip">
+
+                    <h3>編集するときのポイント</h3>
+
+                    <p>
+                        正確な商品情報を入力すると、受け取る人も安心できます。
+                    </p>
+
+                    <ul>
+                        <li>商品名と価格を確認する</li>
+                        <li>商品の状態を正しく記載する</li>
+                        <li>必要に応じて写真を更新する</li>
+                        <li>自宅住所や個人情報を公開しない</li>
+                    </ul>
+
+                </div>
+
+
+                <div class="lf-tip soft">
+
+                    <h3>もったいないを、つながりに。</h3>
+
+                    <p>
+                        使わなくなったものを、必要な人へ。
+                    </p>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="site-footer">
+
+        <div class="container footer-grid">
+
+            <div class="footer-brand">
+
+                <span class="logo-icon">
+                    <i class="fa-solid fa-recycle"></i>
+                </span>
+
+                <span class="logo-text">
+                    Mottainai Connect
+                </span>
+
+                <p data-i18n="footer.tagline">
+                    日本で暮らす外国人・留学生のための、あげる・もらう たすけあいサービス。
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <h4 data-i18n="footer.linksTitle">リンク</h4>
+
+                <a href="../index.html#about" data-i18n="nav.about">
+                    Mottainai Connectとは
+                </a>
+
+                <a href="../index.html#how" data-i18n="nav.how">
+                    使い方
+                </a>
+
+                <a href="../index.html#faq" data-i18n="nav.faq">
+                    よくある質問
+                </a>
+
+            </div>
+
+
+            <div class="footer-contact">
+
+                <h4 data-i18n="footer.contact">お問い合わせ</h4>
+
+                <p>info@mottainai-connect.jp</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p data-i18n="footer.rights">
+                © 2026 Mottainai Connect - 卒業制作
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <!-- Common Scripts -->
+    <script src="../js/lang.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/components.js"></script>
+
+    <script type="module" src="../js/auth/header-auth.js"></script>
+
+    <!-- Edit Product Script -->
+    <script type="module" src="../js/listings/edit-listing.js"></script>
+
+</body>
+</html>

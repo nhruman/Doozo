@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Mottainai Connect - Image Upload Test</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f4f7f5;
+      }
+
+      .upload-box {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 3px 15px #00000012;
+      }
+
+      input,
+      button {
+        margin-top: 15px;
+        width: 100%;
+        padding: 12px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background: #198754;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      img {
+        max-width: 100%;
+        margin-top: 20px;
+        border-radius: 8px;
+      }
+
+      #message {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="upload-box">
+      <h2>Mottainai Connect</h2>
+      <h3>Product Image Upload Test</h3>
+
+      <form id="uploadForm">
+        <input
+          type="file"
+          id="productImage"
+          name="productImage"
+          accept="image/jpeg,image/png,image/webp"
+          required
+        />
+
+        <button type="submit">Upload Image</button>
+      </form>
+
+      <div id="message"></div>
+
+      <div id="preview"></div>
+    </div>
+
+    <script>
+      const form = document.getElementById("uploadForm");
+      const fileInput = document.getElementById("productImage");
+      const message = document.getElementById("message");
+      const preview = document.getElementById("preview");
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const file = fileInput.files[0];
+
+        if (!file) {
+          message.textContent = "Please select an image.";
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("productImage", file);
+
+        try {
+          // Step 1: Send image to backend
+          const uploadResponse = await fetch(
+            "http://localhost:5000/api/products/upload-image",
+            {
+              method: "POST",
+              body: formData,
+            },
+          );
+
+          // Step 2: Read response
+          const responseText = await uploadResponse.text();
+
+          console.log("HTTP Status:", uploadResponse.status);
+          console.log("Server Response:", responseText);
+
+          // Step 3: Convert response to JSON
+          let result;
+
+          try {
+            result = JSON.parse(responseText);
+          } catch (error) {
+            throw new Error("Server returned invalid JSON. Check Terminal.");
+          }
+
+          if (!uploadResponse.ok) {
+            throw new Error(result.message || "Upload failed.");
+          }
+
+          // Step 4: Show success message
+          message.textContent = result.message;
+
+          // Step 5: Show uploaded image
+          const img = document.createElement("img");
+
+          img.src = result.image.url;
+          img.alt = "Uploaded product image";
+          img.style.width = "250px";
+
+          preview.replaceChildren(img);
+
+          console.log("Upload Result:", result);
+        } catch (error) {
+          console.error("Upload Error:", error);
+          message.textContent = error.message;
+        }
+      });
+    </script>
+  </body>
+</html>

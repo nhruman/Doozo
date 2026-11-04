@@ -1,3 +1,8 @@
+
+/* =====================================================
+   1. GLOBAL SETTINGS
+===================================================== */
+
 * {
     box-sizing: border-box;
 }
@@ -8,6 +13,12 @@ body {
     background: #f2f8f4;
     color: #25352c;
 }
+
+
+/* =====================================================
+   2. EXISTING AUTH PAGES
+   Login / Register / Other Auth Pages
+===================================================== */
 
 .auth-container {
     min-height: 100vh;
@@ -105,46 +116,783 @@ body {
     margin-top: 20px;
 }
 
-#register-message {
-    font-size: 14px;
-    margin-top: 15px;
-    text-align: center;
-}
-
+#register-message,
 #login-message {
     font-size: 14px;
     margin-top: 15px;
     text-align: center;
 }
 
-#profile-content {
-    margin-top: 25px;
+
+/* =====================================================
+   3. PROFILE DASHBOARD LAYOUT
+===================================================== */
+
+.profile-page {
+    min-height: 100vh;
+    background: #f5f8f6;
 }
 
-#profile-content p {
-    background: #f2f8f4;
-    padding: 12px;
+.profile-layout {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* =====================================================
+   4. DASHBOARD HEADER
+===================================================== */
+
+.dashboard-header {
+    width: 100%;
+    min-height: 76px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5ece7;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 5%;
+}
+
+.dashboard-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #166534;
+    font-size: 21px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.brand-icon {
+    font-size: 26px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.seller-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #64748b;
+}
+
+.profile-page .dashboard-header .logout-button {
+    width: auto;
+    margin: 0;
+    padding: 10px 18px;
+
+    background: #f0fdf4;
+    color: #166534;
+
+    border: 1px solid #bbf7d0;
     border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.profile-page .dashboard-header .logout-button:hover {
+    background: #dcfce7;
+}
+
+
+/* =====================================================
+   5. MAIN DASHBOARD AREA
+===================================================== */
+
+.dashboard-main {
+    width: 100%;
+    max-width: 1500px;
+
+    margin: 0 auto;
+    padding: 40px 5%;
+
+    flex: 1;
+}
+
+#profile-content {
+    width: 100%;
+}
+
+#profile-content[hidden] {
+    display: none !important;
+}
+
+
+/* =====================================================
+   6. DASHBOARD WELCOME
+===================================================== */
+
+.dashboard-welcome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.dashboard-eyebrow {
+    margin: 0 0 10px;
+
+    color: #16a34a;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.dashboard-welcome h1 {
+    margin: 0;
+    font-size: 30px;
+    color: #163b29;
+}
+
+.welcome-description {
+    margin: 10px 0 0;
+    color: #718078;
+    font-size: 14px;
+}
+
+.add-product-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 13px 20px;
+
+    background: #15803d;
+    color: #ffffff;
+
+    border-radius: 9px;
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+
+    transition: background 0.2s;
+}
+
+.add-product-button:hover {
+    background: #166534;
+}
+
+
+/* =====================================================
+   7. ACCOUNT INFORMATION
+===================================================== */
+
+.account-details {
+    margin-bottom: 32px;
+
+    background: #ffffff;
+    border: 1px solid #e5ece7;
+    border-radius: 10px;
+}
+
+.account-details summary {
+    padding: 15px 18px;
+
+    color: #166534;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.account-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 20px;
+    padding: 18px;
+
+    border-top: 1px solid #edf1ee;
+}
+
+.account-info-grid div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.account-info-grid span {
+    color: #87928b;
+    font-size: 12px;
+}
+
+.account-info-grid strong {
+    color: #25352c;
     font-size: 14px;
     overflow-wrap: anywhere;
 }
 
-#profile-content strong {
-    color: #218c58;
+
+/* =====================================================
+   8. SECTION HEADINGS
+===================================================== */
+
+.section-heading,
+.products-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
 }
 
-#profile-message {
+.section-heading h2,
+.products-heading h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #1b3b2a;
+}
+
+.section-heading p,
+.products-heading p {
+    margin: 7px 0 0;
+    color: #87928b;
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   9. DASHBOARD STATISTICS
+===================================================== */
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 20px;
+    margin-bottom: 45px;
+}
+
+.stat-card {
+    min-width: 0;
+    padding: 23px;
+
+    background: #ffffff;
+    border: 1px solid #e7eee9;
+    border-radius: 13px;
+
+    box-shadow: 0 3px 12px rgba(20, 60, 35, 0.035);
+
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(20, 60, 35, 0.07);
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-icon {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+    font-size: 21px;
+}
+
+.stat-icon.green {
+    background: #dcfce7;
+}
+
+.stat-icon.blue {
+    background: #dbeafe;
+}
+
+.stat-icon.orange {
+    background: #ffedd5;
+}
+
+.stat-icon.purple {
+    background: #f3e8ff;
+}
+
+.stat-label {
+    color: #9aa49e;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-align: right;
+}
+
+.stat-number {
+    margin: 22px 0 5px;
+
+    color: #166534;
+    font-size: 30px;
+    font-weight: 800;
+
+    overflow-wrap: anywhere;
+}
+
+.stat-description {
+    color: #77847b;
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   10. PRODUCT MANAGEMENT SECTION
+===================================================== */
+
+.products-section {
+    margin-top: 20px;
+}
+
+.secondary-add-button {
+    display: inline-block;
+
+    padding: 10px 15px;
+
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+
+    color: #166534;
+    font-size: 13px;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+.secondary-add-button:hover {
+    background: #dcfce7;
+}
+
+
+/* =====================================================
+   11. MY PRODUCTS GRID
+===================================================== */
+
+.my-products-grid {
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 22px;
+    width: 100%;
+}
+
+.my-product-card {
+    min-width: 0;
+    overflow: hidden;
+
+    background: #ffffff;
+    border: 1px solid #e5ece7;
+    border-radius: 12px;
+
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.my-product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+}
+
+.my-product-image {
+    display: block;
+
+    width: 100%;
+    height: 210px;
+
+    object-fit: cover;
+    background: #f3f4f6;
+}
+
+.my-product-info {
+    padding: 17px;
+}
+
+.my-product-info h3 {
+    margin: 0 0 12px;
+
+    color: #25352c;
+    font-size: 16px;
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+}
+
+.my-product-info p {
+    margin: 7px 0;
+
+    color: #718078;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.my-product-info p:first-of-type {
+    color: #166534;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+
+/* =====================================================
+   12. PRODUCT STATUS
+===================================================== */
+
+.product-status {
+    display: inline-block;
+
+    margin-top: 10px;
+    padding: 6px 12px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-reserved {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-sold {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+
+/* =====================================================
+   13. PROFILE MESSAGE
+===================================================== */
+
+.profile-message {
     text-align: center;
+    padding: 25px;
+
+    color: #718078;
     font-size: 14px;
-    color: #777;
 }
 
-[hidden] {
-    display: none !important;
+
+/* =====================================================
+   14. DASHBOARD FOOTER
+===================================================== */
+
+.dashboard-footer {
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 20px 5%;
+
+    background: #ffffff;
+    border-top: 1px solid #e5ece7;
 }
+
+.dashboard-footer p {
+    margin: 0;
+    color: #8b9690;
+    font-size: 12px;
+}
+
+.dashboard-footer a {
+    color: #166534;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+
+/* =====================================================
+   15. LAPTOP RESPONSIVE
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    .dashboard-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .my-products-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .my-product-image {
+        height: 190px;
+    }
+}
+
+
+/* =====================================================
+   16. TABLET RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .dashboard-header {
+        padding: 0 4%;
+        min-height: 68px;
+    }
+
+    .dashboard-main {
+        padding: 30px 4%;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 25px;
+    }
+
+    .my-products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .my-product-image {
+        height: 180px;
+    }
+
+    .account-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-footer {
+        padding: 18px 4%;
+    }
+}
+
+
+/* =====================================================
+   17. MOBILE RESPONSIVE
+===================================================== */
+
+@media (max-width: 500px) {
+
+    .dashboard-brand {
+        font-size: 16px;
+    }
+
+    .brand-icon {
+        font-size: 21px;
+    }
+
+    .seller-label {
+        display: none;
+    }
+
+    .profile-page .dashboard-header .logout-button {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+
+    .dashboard-main {
+        padding: 25px 16px;
+    }
+
+    .dashboard-welcome {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .dashboard-welcome h1 {
+        font-size: 23px;
+    }
+
+    .add-product-button {
+        width: 100%;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 15px;
+    }
+
+    .stat-number {
+        font-size: 24px;
+    }
+
+    .stat-label {
+        font-size: 8px;
+    }
+
+    .stat-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 17px;
+    }
+
+    .my-products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .my-product-image {
+        height: 135px;
+    }
+
+    .my-product-info {
+        padding: 11px;
+    }
+
+    .my-product-info h3 {
+        font-size: 14px;
+    }
+
+    .products-heading h2 {
+        font-size: 17px;
+    }
+
+    .secondary-add-button {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .dashboard-footer {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+
+/* =====================================
+   Product Edit / Delete Buttons
+===================================== */
+
+.product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.product-actions button {
+    flex: 1;
+    padding: 9px 12px;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.edit-product-button {
+    background: #e8f5e9;
+    color: #166534;
+}
+
+.edit-product-button:hover {
+    background: #d1fae5;
+}
+
+.delete-product-button {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.delete-product-button:hover {
+    background: #fecaca;
+}
+
+.product-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ==========================================
+   View Product Button
+========================================== */
+
+.view-product-button {
+    background: #166534;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.view-product-button:hover {
+    background: #15803d;
+}
+
+.view-product-button:focus-visible {
+    outline: 3px solid #86efac;
+    outline-offset: 3px;
+}
+
+/* =====================================================
+   18. VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .my-products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .my-product-image {
+        height: 200px;
+    }
+
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =====================================================
+   19. EXISTING AUTH CARD MOBILE
+===================================================== */
 
 @media (max-width: 480px) {
+
     .auth-card {
         padding: 25px 20px;
     }
+}
+
+
+/* =====================================================
+   20. HIDDEN ELEMENTS
+===================================================== */
+
+[hidden] {
+    display: none !important;
 }

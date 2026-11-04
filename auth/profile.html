@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -5,60 +6,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>マイページ | Mottainai Connect</title>
+    <title>Seller Dashboard | Mottainai Connect</title>
 
     <link rel="stylesheet" href="../css/auth.css">
 </head>
 
-<body>
+<body class="profile-page">
 
-    <div class="auth-container">
+    <div class="profile-layout">
 
-        <div class="auth-card">
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
 
-            <h1>🌱 Mottainai Connect</h1>
+            <a href="../index.html" class="dashboard-brand">
+                <span class="brand-icon">🌱</span>
+                <span>Mottainai Connect</span>
+            </a>
 
-            <h2>マイページ</h2>
+            <div class="header-right">
+                <span class="seller-label">SELLER CENTER</span>
 
-            <p class="auth-description">
-                アカウント情報
-            </p>
+                <button
+                    id="logout-button"
+                    class="logout-button"
+                    type="button">
+                    <span>ログアウト</span>
+                </button>
+            </div>
+
+        </header>
+
+
+        <!-- Main Dashboard -->
+        <main class="dashboard-main">
 
             <div id="profile-content" hidden>
 
-                <p>
-                    <strong>お名前：</strong>
-                    <span id="user-name"></span>
-                </p>
+                <!-- Dashboard Welcome -->
+                <section class="dashboard-welcome">
 
-                <p>
-                    <strong>メールアドレス：</strong>
-                    <span id="user-email"></span>
-                </p>
+                    <div>
+                        <p class="dashboard-eyebrow">
+                            SELLER OVERVIEW
+                        </p>
 
-                <p>
-                    <strong>ユーザーID：</strong>
-                    <span id="user-id"></span>
-                </p>
+                        <h1>ダッシュボード</h1>
 
-                <button id="logout-button" type="button">
-                    ログアウト
-                </button>
+                        <p class="welcome-description">
+                            出品商品や販売状況を管理できます。
+                        </p>
+                    </div>
+
+                    <a href="../give-item.html" class="add-product-button">
+                        <span>＋</span>
+                        商品を出品する
+                    </a>
+
+                </section>
+
+
+                <!-- Account Information -->
+                <details class="account-details">
+
+                    <summary>アカウント情報を見る</summary>
+
+                    <div class="account-info-grid">
+
+                        <div>
+                            <span>お名前</span>
+                            <strong id="user-name"></strong>
+                        </div>
+
+                        <div>
+                            <span>メールアドレス</span>
+                            <strong id="user-email"></strong>
+                        </div>
+
+                        <div>
+                            <span>ユーザーID</span>
+                            <strong id="user-id"></strong>
+                        </div>
+
+                    </div>
+
+                </details>
+
+
+                <!-- Statistics -->
+                <section class="dashboard-overview">
+
+                    <div class="section-heading">
+                        <div>
+                            <h2>出品状況</h2>
+                            <p>あなたの商品の統計情報</p>
+                        </div>
+                    </div>
+
+
+                    <div class="dashboard-stats">
+
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon green">📦</span>
+                                <span class="stat-label">TOTAL LISTINGS</span>
+                            </div>
+
+                            <p id="total-products" class="stat-number">0</p>
+                            <span class="stat-description">出品数</span>
+                        </article>
+
+
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon blue">💴</span>
+                                <span class="stat-label">LISTING VALUE</span>
+                            </div>
+
+                            <p id="total-value" class="stat-number">¥0</p>
+                            <span class="stat-description">出品総額</span>
+                        </article>
+
+
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon orange">✓</span>
+                                <span class="stat-label">COMPLETED</span>
+                            </div>
+
+                            <p id="sold-products" class="stat-number">0</p>
+                            <span class="stat-description">売却・譲渡済み</span>
+                        </article>
+
+
+                        <article class="stat-card">
+                            <div class="stat-top">
+                                <span class="stat-icon purple">📈</span>
+                                <span class="stat-label">TOTAL SALES</span>
+                            </div>
+
+                            <p id="total-sales" class="stat-number">¥0</p>
+                            <span class="stat-description">売上合計</span>
+                        </article>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Product Management -->
+                <section class="products-section">
+
+                    <div class="products-heading">
+
+                        <div>
+                            <h2>自分の出品商品</h2>
+                            <p>現在出品している商品の一覧</p>
+                        </div>
+
+                        <a href="../give-item.html" class="secondary-add-button">
+                            ＋ 新しい商品
+                        </a>
+
+                    </div>
+
+
+                    <div
+                        id="my-products"
+                        class="my-products-grid">
+                    </div>
+
+                </section>
 
             </div>
 
-            <p id="profile-message" role="status" aria-live="polite">
+
+            <!-- Loading / Error Message -->
+            <p
+                id="profile-message"
+                class="profile-message"
+                role="status"
+                aria-live="polite">
                 読み込み中...
             </p>
 
-            <a href="../index.html" class="back-home">
+        </main>
+
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+
+            <p>
+                © 2026 Mottainai Connect.
+                Reuse More, Waste Less.
+            </p>
+
+            <a href="../index.html">
                 ← ホームに戻る
             </a>
 
-        </div>
+        </footer>
 
     </div>
 
+
+    <!-- Profile JavaScript -->
     <script type="module" src="../js/auth/profile.js"></script>
 
 </body>

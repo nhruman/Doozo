@@ -1,32 +1,67 @@
-function createProductCard(product) {
-  const priceText =
-    product.price === 0 ? "無料" : `¥${product.price.toLocaleString()}`;
 
-  return `
+function createProductCard(product) {
+
+    // Backend Image অথবা পুরোনো Local Image
+    const imageSrc = product.image_url
+        ? `http://localhost:5000${product.image_url}`
+        : `images/${product.category}/${product.image}`;
+
+    // Price
+    const price = Number(product.price) || 0;
+
+    const priceText =
+        price === 0
+            ? "無料"
+            : `¥${price.toLocaleString("ja-JP")}`;
+
+    // Condition
+    const conditionText = {
+        new: "新品",
+        good: "良好",
+        used: "中古"
+    };
+
+    const condition = conditionText[product.condition]
+        || product.condition
+        || "";
+
+    // Location
+    const location = product.location || "";
+
+    // Distance (পুরোনো Product-এর জন্য)
+    const distance = product.distance || "";
+
+    // Pickup
+    const pickup = product.pickup || "直接受け渡し";
+
+    // Product Details URL
+    const detailURL =
+        `product-details.html?category=${encodeURIComponent(product.category)}&id=${encodeURIComponent(product.id)}`;
+
+    return `
         <article class="product-card">
 
             <div class="card-image-box">
 
-<a
-    href="product-details.html?category=${encodeURIComponent(product.category)}&id=${encodeURIComponent(product.id)}"
-    class="product-image-link"
-    target="_blank"
-    rel="noopener noreferrer"
->
-    <img
-        src="images/${product.category}/${product.image}"
-        alt="${product.title}"
-        class="product-image"
-        loading="lazy"
-    >
-</a>
+                <a
+                    href="${detailURL}"
+                    class="product-image-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <img
+                        src="${imageSrc}"
+                        alt="${product.title}"
+                        class="product-image"
+                        loading="lazy"
+                    >
+                </a>
 
-    <span class="badge ${product.price === 0 ? "badge-free" : ""}">
-        ${priceText}
-    </span>
+                <span class="badge ${price === 0 ? "badge-free" : ""}">
+                    ${priceText}
+                </span>
 
-</div>
-
+            </div>
 
             <div class="card-body">
 
@@ -38,31 +73,29 @@ function createProductCard(product) {
 
                     <p class="product-meta">
                         <i class="fa-solid fa-location-dot"></i>
-                        ${product.location}
-                        ・
-                        ${product.distance}
+                        ${location}
+                        ${distance ? `・${distance}` : ""}
                     </p>
 
                     <p class="product-condition">
-                        ${product.condition}
+                        ${condition}
                     </p>
 
                 </div>
-
 
                 <div class="card-footer">
 
                     <span class="volunteer-badge">
                         <i class="fa-solid fa-user-shield"></i>
-                        ${product.pickup}
+                        ${pickup}
                     </span>
 
                     <a
-                        href="product-details.html?category=${encodeURIComponent(product.category)}&id=${encodeURIComponent(product.id)}"
+                        href="${detailURL}"
                         class="btn-take"
                         target="_blank"
                         rel="noopener noreferrer"
-                        >
+                    >
                         欲しい
                     </a>
 
