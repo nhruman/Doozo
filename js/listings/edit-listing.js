@@ -14,7 +14,7 @@ import {
 // Backend API
 // =====================================
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://dozo-xslw.onrender.com";
 const API_URL = `${API_BASE}/api/products`;
 
 

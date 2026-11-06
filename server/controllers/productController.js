@@ -1,26 +1,201 @@
 
 const db = require("../database/database");
-const fs = require("fs");
+const supabase = require("../config/supabase");
+const crypto = require("crypto");
+const path = require("path");
 
 // ======================================================
-// 1. Delete Uploaded Files if Saving Fails
+// Supabase Storage Settings
 // ======================================================
 
-function removeUploadedFiles(files) {
-    files.forEach(file => {
-        if (fs.existsSync(file.path)) {
-            fs.unlinkSync(file.path);
+const BUCKET = "product-images";
+
+// Allowed Categories
+const allowedCategories = [
+    "electronics",
+    "clothing",
+    "books",
+    "household",
+    "toy",
+    "furniture",
+    "bedding",
+    "sports",
+    "hobby",
+    "indoor"
+];
+
+// Allowed Conditions
+const allowedConditions = ["new", "good", "used"];
+
+
+// ======================================================
+// 1. Upload Images to Supabase
+// ======================================================
+
+async function uploadImagesToSupabase(files) {
+
+    const uploadedImages = [];
+
+    try {
+        for (const file of files) {
+
+            // Create unique image name
+            const extension = path.extname(
+                file.originalname
+            ).toLowerCase();
+
+            const fileName =
+                crypto.randomUUID() + extension;
+
+            const objectPath = `products/${fileName}`;
+
+            // Upload image to Supabase
+            const { data, error } = await supabase.storage
+                .from(BUCKET)
+                .upload(objectPath, file.buffer, {
+                    contentType: file.mimetype,
+                    cacheControl: "3600",
+                    upsert: false
+                });
+
+            if (error) {
+                throw error;
+            }
+
+            // Get Public URL
+            const { data: publicData } = supabase.storage
+                .from(BUCKET)
+                .getPublicUrl(data.path);
+
+            uploadedImages.push({
+                url: publicData.publicUrl,
+                path: data.path
+            });
         }
-    });
+
+        return uploadedImages;
+
+    } catch (error) {
+
+        // Delete partially uploaded images
+        const uploadedPaths = uploadedImages.map(
+            image => image.path
+        );
+
+        if (uploadedPaths.length > 0) {
+            await deleteStoragePaths(uploadedPaths);
+        }
+
+        throw error;
+    }
 }
 
 
 // ======================================================
-// 2. Upload Single Product Image
+// 2. Get Supabase Storage Path from Image URL
 // ======================================================
 
-const uploadProductImage = (req, res) => {
+function getSupabaseObjectPath(imageUrl) {
+
+    if (typeof imageUrl !== "string") {
+        return null;
+    }
+
     try {
+        const parsedUrl = new URL(imageUrl);
+
+        const marker =
+            `/storage/v1/object/public/${BUCKET}/`;
+
+        const index = parsedUrl.pathname.indexOf(marker);
+
+        if (index === -1) {
+            return null;
+        }
+
+        const encodedPath = parsedUrl.pathname.slice(
+            index + marker.length
+        );
+
+        return decodeURIComponent(encodedPath);
+
+    } catch (error) {
+        return null;
+    }
+}
+
+
+// ======================================================
+// 3. Delete Images from Supabase
+// ======================================================
+
+async function deleteStoragePaths(paths) {
+
+    const uniquePaths = [...new Set(paths)];
+
+    if (uniquePaths.length === 0) {
+        return;
+    }
+
+    const { error } = await supabase.storage
+        .from(BUCKET)
+        .remove(uniquePaths);
+
+    if (error) {
+        console.error("Supabase Image Delete Error:", error);
+    }
+}
+
+
+// ======================================================
+// 4. Delete Old Images if They Are No Longer Used
+// ======================================================
+
+async function deleteUnusedSupabaseImages(imageUrls) {
+
+    const pathsToDelete = [];
+
+    for (const imageUrl of [...new Set(imageUrls)]) {
+
+        const objectPath = getSupabaseObjectPath(imageUrl);
+
+        // Ignore old local images and external URLs
+        if (!objectPath) {
+            continue;
+        }
+
+        // Check if another product still uses this image
+        const productReference = db.prepare(`
+            SELECT id
+            FROM products
+            WHERE image_url = ?
+            LIMIT 1
+        `).get(imageUrl);
+
+        const imageReference = db.prepare(`
+            SELECT id
+            FROM product_images
+            WHERE image_url = ?
+            LIMIT 1
+        `).get(imageUrl);
+
+        if (!productReference && !imageReference) {
+            pathsToDelete.push(objectPath);
+        }
+    }
+
+    await deleteStoragePaths(pathsToDelete);
+}
+
+
+// ======================================================
+// 5. Upload Single Product Image
+// ======================================================
+
+const uploadProductImage = async (req, res) => {
+
+    try {
+
         if (!req.file) {
             return res.status(400).json({
                 success: false,
@@ -28,21 +203,26 @@ const uploadProductImage = (req, res) => {
             });
         }
 
-        const imageUrl =
-            `/uploads/products/${req.file.filename}`;
+        const uploadedImages = await uploadImagesToSupabase([
+            req.file
+        ]);
+
+        const image = uploadedImages[0];
 
         return res.status(201).json({
             success: true,
             message: "Product image uploaded successfully!",
+
             image: {
-                filename: req.file.filename,
+                filename: image.path,
                 originalName: req.file.originalname,
                 size: req.file.size,
-                url: imageUrl
+                url: image.url
             }
         });
 
     } catch (error) {
+
         console.error("Upload Error:", error);
 
         return res.status(500).json({
@@ -54,14 +234,16 @@ const uploadProductImage = (req, res) => {
 
 
 // ======================================================
-// 3. Create New Product
+// 6. Create New Product
 // ======================================================
 
-const createProduct = (req, res) => {
+const createProduct = async (req, res) => {
 
     const files = req.files || [];
+    let uploadedImages = [];
 
     try {
+
         const {
             userId,
             title,
@@ -83,8 +265,6 @@ const createProduct = (req, res) => {
             !location ||
             !description
         ) {
-            removeUploadedFiles(files);
-
             return res.status(400).json({
                 success: false,
                 message: "Please fill in all required fields."
@@ -98,8 +278,6 @@ const createProduct = (req, res) => {
             title.trim().length === 0 ||
             title.trim().length > 90
         ) {
-            removeUploadedFiles(files);
-
             return res.status(400).json({
                 success: false,
                 message: "Product name must be 1 to 90 characters."
@@ -107,23 +285,8 @@ const createProduct = (req, res) => {
         }
 
 
-        // Allowed Categories
-        const allowedCategories = [
-            "electronics",
-            "clothing",
-            "books",
-            "household",
-            "toy",
-            "furniture",
-            "bedding",
-            "sports",
-            "hobby",
-            "indoor"
-        ];
-
+        // Validate Category
         if (!allowedCategories.includes(category)) {
-            removeUploadedFiles(files);
-
             return res.status(400).json({
                 success: false,
                 message: "Invalid product category."
@@ -131,16 +294,8 @@ const createProduct = (req, res) => {
         }
 
 
-        // Allowed Conditions
-        const allowedConditions = [
-            "new",
-            "good",
-            "used"
-        ];
-
+        // Validate Condition
         if (!allowedConditions.includes(condition)) {
-            removeUploadedFiles(files);
-
             return res.status(400).json({
                 success: false,
                 message: "Invalid product condition."
@@ -156,8 +311,6 @@ const createProduct = (req, res) => {
             productPrice < 0 ||
             productPrice > 1000000
         ) {
-            removeUploadedFiles(files);
-
             return res.status(400).json({
                 success: false,
                 message: "Invalid product price."
@@ -174,8 +327,6 @@ const createProduct = (req, res) => {
             description.trim().length < 15 ||
             description.trim().length > 1500
         ) {
-            removeUploadedFiles(files);
-
             return res.status(400).json({
                 success: false,
                 message: "Please check location and description."
@@ -185,8 +336,6 @@ const createProduct = (req, res) => {
 
         // Validate Images
         if (files.length < 1 || files.length > 5) {
-            removeUploadedFiles(files);
-
             return res.status(400).json({
                 success: false,
                 message: "Please upload 1 to 5 product images."
@@ -194,9 +343,11 @@ const createProduct = (req, res) => {
         }
 
 
-        // Prepare Image URLs
-        const imageUrls = files.map(file =>
-            `/uploads/products/${file.filename}`
+        // Upload Images to Supabase
+        uploadedImages = await uploadImagesToSupabase(files);
+
+        const imageUrls = uploadedImages.map(
+            image => image.url
         );
 
 
@@ -275,7 +426,7 @@ const createProduct = (req, res) => {
 
         } catch (databaseError) {
 
-            // Rollback if Database Error
+            // Rollback Database
             db.exec("ROLLBACK");
 
             throw databaseError;
@@ -285,7 +436,12 @@ const createProduct = (req, res) => {
 
         console.error("Product Save Error:", error);
 
-        removeUploadedFiles(files);
+        // Remove newly uploaded Supabase images
+        const uploadedPaths = uploadedImages.map(
+            image => image.path
+        );
+
+        await deleteStoragePaths(uploadedPaths);
 
         return res.status(500).json({
             success: false,
@@ -296,7 +452,7 @@ const createProduct = (req, res) => {
 
 
 // ======================================================
-// 4. Get All Products
+// 7. Get All Products
 // ======================================================
 
 const getProducts = (req, res) => {
@@ -354,7 +510,7 @@ const getProducts = (req, res) => {
 
 
 // ======================================================
-// 5. Get Products Uploaded by a Specific User
+// 8. Get Products Uploaded by a Specific User
 // ======================================================
 
 const getMyProducts = (req, res) => {
@@ -425,16 +581,16 @@ const getMyProducts = (req, res) => {
 
 
 // ======================================================
-// 6. Export All Controller Functions
-// ======================================================
-// ======================================================
-// 6. Update Existing Product
+// 9. Update Existing Product
 // ======================================================
 
-const updateProduct = (req, res) => {
+const updateProduct = async (req, res) => {
+
     const files = req.files || [];
+    let uploadedImages = [];
 
     try {
+
         const productId = Number(req.params.id);
 
         const {
@@ -447,16 +603,20 @@ const updateProduct = (req, res) => {
             description
         } = req.body;
 
-        if (!Number.isSafeInteger(productId) || productId <= 0) {
-            removeUploadedFiles(files);
 
+        // Validate Product ID
+        if (
+            !Number.isSafeInteger(productId) ||
+            productId <= 0
+        ) {
             return res.status(400).json({
                 success: false,
                 message: "Invalid product ID."
             });
         }
 
-        // Check Required Fields
+
+        // Validate Required Fields
         if (
             !userId ||
             !title ||
@@ -466,13 +626,12 @@ const updateProduct = (req, res) => {
             !location ||
             !description
         ) {
-            removeUploadedFiles(files);
-
             return res.status(400).json({
                 success: false,
                 message: "Please fill in all required fields."
             });
         }
+
 
         // Check Product Ownership
         const existingProduct = db.prepare(`
@@ -481,23 +640,16 @@ const updateProduct = (req, res) => {
             WHERE id = ? AND user_id = ?
         `).get(productId, userId);
 
-        if (!existingProduct) {
-            removeUploadedFiles(files);
 
+        if (!existingProduct) {
             return res.status(404).json({
                 success: false,
                 message: "Product not found or permission denied."
             });
         }
 
-        // Validate Product Information
-        const allowedCategories = [
-            "electronics", "clothing", "books", "household",
-            "toy", "furniture", "bedding", "sports",
-            "hobby", "indoor"
-        ];
 
-        const allowedConditions = ["new", "good", "used"];
+        // Validate Product Information
         const productPrice = Number(price);
 
         if (
@@ -517,37 +669,53 @@ const updateProduct = (req, res) => {
             description.trim().length > 1500 ||
             files.length > 5
         ) {
-            removeUploadedFiles(files);
-
             return res.status(400).json({
                 success: false,
                 message: "Please check the product information."
             });
         }
 
+
         // Get Old Images
-        const oldImages = db.prepare(`
+        const oldImageRows = db.prepare(`
             SELECT image_url
             FROM product_images
             WHERE product_id = ?
-        `).all(productId).map(row => row.image_url);
+        `).all(productId);
 
-        const newImageUrls = files.map(file =>
-            `/uploads/products/${file.filename}`
+        const oldImages = [
+            ...oldImageRows.map(row => row.image_url),
+            existingProduct.image_url
+        ].filter(Boolean);
+
+
+        // Upload New Images if Selected
+        if (files.length > 0) {
+
+            uploadedImages = await uploadImagesToSupabase(files);
+        }
+
+
+        const newImageUrls = uploadedImages.map(
+            image => image.url
         );
+
 
         // Keep Old Images if No New Images Were Uploaded
         const finalImages = files.length > 0
             ? newImageUrls
-            : oldImages.length > 0
-                ? oldImages
+            : oldImageRows.length > 0
+                ? oldImageRows.map(row => row.image_url)
                 : existingProduct.image_url
                     ? [existingProduct.image_url]
                     : [];
 
+
+        // Start Database Transaction
         db.exec("BEGIN");
 
         try {
+
             // Update Product Information
             db.prepare(`
                 UPDATE products
@@ -572,12 +740,15 @@ const updateProduct = (req, res) => {
                 userId
             );
 
+
             // Replace Images Only When New Images Are Uploaded
             if (files.length > 0) {
+
                 db.prepare(`
                     DELETE FROM product_images
                     WHERE product_id = ?
                 `).run(productId);
+
 
                 const insertImage = db.prepare(`
                     INSERT INTO product_images (
@@ -592,21 +763,28 @@ const updateProduct = (req, res) => {
                 });
             }
 
+
+            // Commit Transaction
             db.exec("COMMIT");
 
         } catch (databaseError) {
+
             db.exec("ROLLBACK");
+
             throw databaseError;
         }
 
-        // Remove Old Images After Successful Update
+
+        // Delete Old Supabase Images After Successful Update
         if (files.length > 0) {
-            removeUnusedProductImages(oldImages);
+            await deleteUnusedSupabaseImages(oldImages);
         }
+
 
         return res.status(200).json({
             success: true,
             message: "Product updated successfully!",
+
             product: {
                 id: productId,
                 title: title.trim(),
@@ -620,9 +798,15 @@ const updateProduct = (req, res) => {
         });
 
     } catch (error) {
+
         console.error("Update Product Error:", error);
 
-        removeUploadedFiles(files);
+        // Remove newly uploaded images if update failed
+        const uploadedPaths = uploadedImages.map(
+            image => image.path
+        );
+
+        await deleteStoragePaths(uploadedPaths);
 
         return res.status(500).json({
             success: false,
@@ -633,14 +817,19 @@ const updateProduct = (req, res) => {
 
 
 // ======================================================
-// 7. Delete Product
+// 10. Delete Product
 // ======================================================
 
-const deleteProduct = (req, res) => {
+const deleteProduct = async (req, res) => {
+
     try {
+
         const productId = Number(req.params.id);
+
         const { userId } = req.body || {};
 
+
+        // Validate Product Information
         if (
             !Number.isSafeInteger(productId) ||
             productId <= 0 ||
@@ -652,6 +841,7 @@ const deleteProduct = (req, res) => {
             });
         }
 
+
         // Check Ownership
         const product = db.prepare(`
             SELECT *
@@ -659,12 +849,14 @@ const deleteProduct = (req, res) => {
             WHERE id = ? AND user_id = ?
         `).get(productId, userId);
 
+
         if (!product) {
             return res.status(404).json({
                 success: false,
                 message: "Product not found or permission denied."
             });
         }
+
 
         // Collect Product Images
         const imageRows = db.prepare(`
@@ -678,29 +870,37 @@ const deleteProduct = (req, res) => {
             product.image_url
         ].filter(Boolean);
 
+
         // Delete from Database
         db.exec("BEGIN");
 
         try {
+
             db.prepare(`
                 DELETE FROM product_images
                 WHERE product_id = ?
             `).run(productId);
+
 
             db.prepare(`
                 DELETE FROM products
                 WHERE id = ? AND user_id = ?
             `).run(productId, userId);
 
+
             db.exec("COMMIT");
 
         } catch (databaseError) {
+
             db.exec("ROLLBACK");
+
             throw databaseError;
         }
 
-        // Delete Physical Images After Database Success
-        removeUnusedProductImages(imageUrls);
+
+        // Delete Supabase Images After Database Success
+        await deleteUnusedSupabaseImages(imageUrls);
+
 
         return res.status(200).json({
             success: true,
@@ -708,6 +908,7 @@ const deleteProduct = (req, res) => {
         });
 
     } catch (error) {
+
         console.error("Delete Product Error:", error);
 
         return res.status(500).json({
@@ -719,72 +920,16 @@ const deleteProduct = (req, res) => {
 
 
 // ======================================================
-// 8. Remove Images Not Used by Other Products
+// 11. Export All Controller Functions
 // ======================================================
 
-const path = require("path");
-
-function removeUnusedProductImages(imageUrls) {
-    const uploadDirectory = path.resolve(
-        __dirname,
-        "../uploads/products"
-    );
-
-    const uniqueUrls = [...new Set(imageUrls)];
-
-    uniqueUrls.forEach(imageUrl => {
-        try {
-            // Only allow our local product image paths
-            if (
-                typeof imageUrl !== "string" ||
-                !imageUrl.startsWith("/uploads/products/")
-            ) {
-                return;
-            }
-
-            const filename = path.basename(imageUrl);
-
-            const filePath = path.resolve(
-                uploadDirectory,
-                filename
-            );
-
-            // Prevent paths outside uploads/products
-            if (!filePath.startsWith(uploadDirectory + path.sep)) {
-                return;
-            }
-
-            // Do not delete an image used by another product
-            const productReference = db.prepare(`
-                SELECT id
-                FROM products
-                WHERE image_url = ?
-                LIMIT 1
-            `).get(imageUrl);
-
-            const imageReference = db.prepare(`
-                SELECT id
-                FROM product_images
-                WHERE image_url = ?
-                LIMIT 1
-            `).get(imageUrl);
-
-            if (!productReference && !imageReference) {
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath);
-                }
-            }
-
-        } catch (error) {
-            console.error("Image Cleanup Error:", error);
-        }
-    });
-}
 module.exports = {
+
     uploadProductImage,
     createProduct,
     getProducts,
     getMyProducts,
     updateProduct,
     deleteProduct
+
 };

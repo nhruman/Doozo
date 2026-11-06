@@ -1,7 +1,7 @@
 
 const productGrid = document.getElementById("products-container");
 
-const API_URL = "http://localhost:5000/api/products";
+const API_URL = "https://dozo-xslw.onrender.com";
 
 // ========================================
 // 1. পুরোনো Static Product Data

@@ -1,0 +1,57 @@
+
+# =================================
+# Node.js
+# =================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+**/node_modules/
+**/data/*.db
+# =================================
+# Environment Variables - Secrets
+# =================================
+.env
+.env.*
+!.env.example
+
+# =================================
+# Database
+# =================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+
+# =================================
+# Uploaded Images / User Files
+# =================================
+uploads/
+server/uploads/
+public/uploads/
+
+# =================================
+# Logs
+# =================================
+*.log
+logs/
+
+# =================================
+# Operating System
+# =================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =================================
+# Editor Settings
+# =================================
+.vscode/
+.idea/
+
+# =================================
+# Temporary Files
+# =================================
+*.tmp
+*.bak

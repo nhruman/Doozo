@@ -1,44 +1,56 @@
-
 function createProductCard(product) {
+  // ===========================================
+  // Product Image URL
+  // ===========================================
 
-    // Backend Image অথবা পুরোনো Local Image
-    const imageSrc = product.image_url
-        ? `http://localhost:5000${product.image_url}`
-        : `images/${product.category}/${product.image}`;
+  let imageSrc = "";
 
-    // Price
-    const price = Number(product.price) || 0;
+  // Backend অথবা Supabase Image
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    imageSrc = product.images[0];
+  } else if (product.image_url) {
+    imageSrc = product.image_url;
+  } else if (product.image) {
+    imageSrc = product.image;
+  }
 
-    const priceText =
-        price === 0
-            ? "無料"
-            : `¥${price.toLocaleString("ja-JP")}`;
+  // Full URL হলে সরাসরি ব্যবহার
+  if (imageSrc.startsWith("http://") || imageSrc.startsWith("https://")) {
+    // Supabase URL - কোনো পরিবর্তন প্রয়োজন নেই
+  } else if (imageSrc.startsWith("/")) {
+    // পুরোনো Local Backend Image
+    imageSrc = `https://dozo-xslw.onrender.com${imageSrc}`;
+  } else if (imageSrc) {
+    // পুরোনো Static Local Image
+    imageSrc = `images/${product.category}/${imageSrc}`;
+  }
+  // Price
+  const price = Number(product.price) || 0;
 
-    // Condition
-    const conditionText = {
-        new: "新品",
-        good: "良好",
-        used: "中古"
-    };
+  const priceText = price === 0 ? "無料" : `¥${price.toLocaleString("ja-JP")}`;
 
-    const condition = conditionText[product.condition]
-        || product.condition
-        || "";
+  // Condition
+  const conditionText = {
+    new: "新品",
+    good: "良好",
+    used: "中古",
+  };
 
-    // Location
-    const location = product.location || "";
+  const condition = conditionText[product.condition] || product.condition || "";
 
-    // Distance (পুরোনো Product-এর জন্য)
-    const distance = product.distance || "";
+  // Location
+  const location = product.location || "";
 
-    // Pickup
-    const pickup = product.pickup || "直接受け渡し";
+  // Distance (পুরোনো Product-এর জন্য)
+  const distance = product.distance || "";
 
-    // Product Details URL
-    const detailURL =
-        `product-details.html?category=${encodeURIComponent(product.category)}&id=${encodeURIComponent(product.id)}`;
+  // Pickup
+  const pickup = product.pickup || "直接受け渡し";
 
-    return `
+  // Product Details URL
+  const detailURL = `product-details.html?category=${encodeURIComponent(product.category)}&id=${encodeURIComponent(product.id)}`;
+
+  return `
         <article class="product-card">
 
             <div class="card-image-box">

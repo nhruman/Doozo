@@ -6,23 +6,27 @@
 
 
 /* =========================
-   Header
+   Main Header
    ========================= */
 
 .main-header {
-    background:
-        linear-gradient(
-            180deg,
-            #040b16 0%,
-            #081a2c 100%
-        );
-    border-bottom: 1px solid rgba(111, 220, 58, 0.18);
+    background: linear-gradient(
+        135deg,
+        #166534 0%,
+        #14532d 100%
+    );
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 100;
 }
+
 
 
 /* =========================
@@ -81,6 +85,7 @@
 }
 
 
+
 /* =========================
    Center Navigation
    ========================= */
@@ -89,33 +94,45 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+
     display: flex;
     align-items: center;
-    gap: 28px;
+    gap: 14px;
 }
 
 .nav-center a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
+
+    padding: 10px 18px;
+
     color: #ffffff;
     text-decoration: none;
+
     font-size: 1rem;
     font-weight: 600;
-    border: 1px solid rgb(255, 240, 79);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    transition: background-color 0.2s ease, 
-                color 0.2s ease, 
-                border-color 0.2s ease,
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    transition: all 0.25s ease;
 }
 
 .nav-center a:hover {
-    color: white;
-    border-color: #d5d5d5;
+    color: #166534;
+    background: #ffffff;
+    border-color: #ffffff;
 }
 
+/* Current Page */
+.nav-center a.is-active {
+    color: #166534 !important;
+    background: #ffffff;
+    border-color: #ffffff;
+}
 
 /* =========================
    Right Navigation
@@ -200,26 +217,10 @@
 }
 
 .dropdown-content {
-    display: none;
-
-    position: absolute;
-
-    top: calc(100% + 8px);
-    right: 0;
-
-    min-width: 180px;
-
-    background: #081a2c;
-
-    border: 1px solid rgba(255, 255, 255, 0.15);
-
+    background: #14532d;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-
-    padding: 8px;
-
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-
-    z-index: 200;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
 .dropdown:hover .dropdown-content {
@@ -247,9 +248,8 @@
 }
 
 .dropdown-content button:hover {
-    background: rgba(111, 220, 58, 0.12);
-
-    color: #6fdc3a;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
 }
 
 
@@ -302,10 +302,8 @@
 
 .mobile-nav {
     display: none;
-
-    background: #081a2c;
-
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    background: #14532d;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .mobile-nav a {
@@ -321,7 +319,8 @@
 }
 
 .mobile-nav a:hover {
-    color: #6fdc3a;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
 }
 
 

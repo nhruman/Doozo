@@ -8,7 +8,7 @@
 // 1. API SETTINGS
 // =====================================================
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://dozo-xslw.onrender.com";
 const API_URL = `${API_BASE}/api/products`;
 
 const params = new URLSearchParams(window.location.search);
@@ -108,6 +108,7 @@ function getProductImages(product) {
 }
 
 
+
 // =====================================================
 // 5. GET SELECTED PRODUCT
 // =====================================================
@@ -115,50 +116,50 @@ function getProductImages(product) {
 async function getSelectedProduct() {
 
     // -----------------------------------------------
-    // Profile Products: SQLite Backend
+    // 1. First: Search SQLite Backend
     // -----------------------------------------------
 
-    if (source === "profile") {
+    try {
 
-        try {
+        const response = await fetch(API_URL);
 
-            const response = await fetch(API_URL);
+        if (!response.ok) {
+            throw new Error(`Server Error: ${response.status}`);
+        }
 
-            if (!response.ok) {
+        const result = await response.json();
 
-                throw new Error(
-                    `Server Error: ${response.status}`
-                );
+        if (!result.success || !Array.isArray(result.products)) {
+            throw new Error("Invalid product data.");
+        }
 
-            }
+        const backendProduct = result.products.find(
+            item => String(item.id) === String(selectedId)
+        );
 
-            const result = await response.json();
+        // Backend product found
+        if (backendProduct) {
 
-            if (!result.success || !Array.isArray(result.products)) {
+            console.log("Product Source: SQLite Backend");
 
-                throw new Error("Invalid product data.");
+            return backendProduct;
 
-            }
+        }
 
-            const product = result.products.find(
-                item => String(item.id) === String(selectedId)
-            );
+    } catch (error) {
 
-            return product || null;
+        console.warn("Backend Product Search:", error);
 
-        } catch (error) {
-
-            console.error("Product Loading Error:", error);
-
+        // Profile products require backend
+        if (source === "profile") {
             throw error;
-
         }
 
     }
 
 
     // -----------------------------------------------
-    // Home Page Products: Static JavaScript Data
+    // 2. Second: Search Static JavaScript Products
     // -----------------------------------------------
 
     const allProducts = {
@@ -197,11 +198,22 @@ async function getSelectedProduct() {
 
     const productList = allProducts[selectedCategory] || [];
 
-    return productList.find(
+    const staticProduct = productList.find(
         item => String(item.id) === String(selectedId)
     );
 
+    if (staticProduct) {
+
+        console.log("Product Source: Static JavaScript");
+
+        return staticProduct;
+
+    }
+
+    return null;
+
 }
+
 
 
 // =====================================================

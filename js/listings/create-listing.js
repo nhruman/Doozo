@@ -19,8 +19,8 @@ let currentUser = null;
 let previewURLs = [];
 
 // Backend API
-const API_URL = 'http://localhost:5000/api/products';
-
+// Backend API
+const API_URL = "https://dozo-xslw.onrender.com/api/products";
 // Authentication Check
 onAuthStateChanged(auth, user => {
 
