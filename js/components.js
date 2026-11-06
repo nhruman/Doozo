@@ -88,14 +88,30 @@
             <a href="auth/login.html"id="mobile-account-link"data-i18n="nav.login">ログイン</a>
         </div>
     </header>`;
+// ==========================================================
+// Active Page: Automatically highlight the current page
+// ==========================================================
 
-  // Active page: current page gets a small visual hint.
-  const page = location.pathname.split("/").pop() || "index.html";
-  header.querySelectorAll("a[href]").forEach((link) => {
-    const href = link.getAttribute("href") || "";
-    if (href === page || (page === "" && href === "index.html"))
-      link.classList.add("is-active");
-  });
+const page = location.pathname.split("/").pop() || "index.html";
+
+header.querySelectorAll("a[href]").forEach((link) => {
+
+  const href = link.getAttribute("href") || "";
+
+  // Check current page
+  if (href === page) {
+
+    link.classList.add("is-active");
+    link.setAttribute("aria-current", "page");
+
+  } else {
+
+    link.classList.remove("is-active");
+    link.removeAttribute("aria-current");
+
+  }
+
+});
 
   // Mobile menu open/close.
   const toggle = document.getElementById("menu-toggle");
