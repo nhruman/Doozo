@@ -122,13 +122,38 @@
 }
 
 .nav-center a:hover {
-    color: #166534;
+    color: #166534 !important;
     background: #ffffff;
     border-color: #ffffff;
 }
 
 /* Current Page */
 .nav-center a.is-active {
+    color: #166534 !important;
+    background: #ffffff;
+    border-color: #ffffff;
+    position: relative;
+}
+
+
+/* =================================
+   Active Navigation Link
+   ================================= */
+
+#site-header .nav-center a.is-active {
+    color: #166534 !important;
+    background: #ffffff;
+    border-color: #ffffff;
+
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;
+}
+
+/* Hover */
+
+#site-header .nav-center a:hover {
     color: #166534 !important;
     background: #ffffff;
     border-color: #ffffff;

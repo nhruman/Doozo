@@ -1,57 +1,118 @@
+
 function createProductCard(product) {
-  // ===========================================
-  // Product Image URL
-  // ===========================================
 
-  let imageSrc = "";
+    // ===========================================
+    // Product Image URL
+    // ===========================================
 
-  // Backend অথবা Supabase Image
-  if (Array.isArray(product.images) && product.images.length > 0) {
-    imageSrc = product.images[0];
-  } else if (product.image_url) {
-    imageSrc = product.image_url;
-  } else if (product.image) {
-    imageSrc = product.image;
-  }
+    let imageSrc = "";
 
-  // Full URL হলে সরাসরি ব্যবহার
-  if (imageSrc.startsWith("http://") || imageSrc.startsWith("https://")) {
-    // Supabase URL - কোনো পরিবর্তন প্রয়োজন নেই
-  } else if (imageSrc.startsWith("/")) {
-    // পুরোনো Local Backend Image
-    imageSrc = `https://dozo-xslw.onrender.com${imageSrc}`;
-  } else if (imageSrc) {
-    // পুরোনো Static Local Image
-    imageSrc = `images/${product.category}/${imageSrc}`;
-  }
-  // Price
-  const price = Number(product.price) || 0;
+    // Backend অথবা Supabase Image
+    if (Array.isArray(product.images) && product.images.length > 0) {
+        imageSrc = product.images[0];
 
-  const priceText = price === 0 ? "無料" : `¥${price.toLocaleString("ja-JP")}`;
+    } else if (product.image_url) {
+        imageSrc = product.image_url;
 
-  // Condition
-  const conditionText = {
-    new: "新品",
-    good: "良好",
-    used: "中古",
-  };
+    } else if (product.image) {
+        imageSrc = product.image;
+    }
 
-  const condition = conditionText[product.condition] || product.condition || "";
+    // Full URL হলে সরাসরি ব্যবহার
+    if (
+        imageSrc.startsWith("http://") ||
+        imageSrc.startsWith("https://")
+    ) {
+        // Supabase URL - কোনো পরিবর্তন প্রয়োজন নেই
 
-  // Location
-  const location = product.location || "";
+    } else if (imageSrc.startsWith("/")) {
 
-  // Distance (পুরোনো Product-এর জন্য)
-  const distance = product.distance || "";
+        // পুরোনো Local Backend Image
+        imageSrc = `https://dozo-xslw.onrender.com${imageSrc}`;
 
-  // Pickup
-  const pickup = product.pickup || "直接受け渡し";
+    } else if (imageSrc) {
 
-  // Product Details URL
-  const detailURL = `product-details.html?category=${encodeURIComponent(product.category)}&id=${encodeURIComponent(product.id)}`;
+        // পুরোনো Static Local Image
+        imageSrc = `images/${product.category}/${imageSrc}`;
+    }
 
-  return `
-        <article class="product-card">
+
+    // ===========================================
+    // Price
+    // ===========================================
+
+    const price = Number(product.price) || 0;
+
+    const priceText = price === 0
+        ? "無料"
+        : `¥${price.toLocaleString("ja-JP")}`;
+
+
+    // ===========================================
+    // Condition
+    // ===========================================
+
+    const conditionText = {
+        new: "新品",
+        good: "良好",
+        used: "中古",
+    };
+
+    const condition =
+        conditionText[product.condition] ||
+        product.condition ||
+        "";
+
+
+    // ===========================================
+    // Filter Condition
+    // ===========================================
+
+    const filterCondition =
+        product.condition === "new"
+            ? "new"
+            : ["used", "good"].includes(product.condition)
+                ? "used"
+                : "other";
+
+
+    // ===========================================
+    // Location
+    // ===========================================
+
+    const location = product.location || "";
+
+
+    // ===========================================
+    // Distance (পুরোনো Product-এর জন্য)
+    // ===========================================
+
+    const distance = product.distance || "";
+
+
+    // ===========================================
+    // Pickup
+    // ===========================================
+
+    const pickup = product.pickup || "直接受け渡し";
+
+
+    // ===========================================
+    // Product Details URL
+    // ===========================================
+
+    const detailURL =
+        `product-details.html?category=${encodeURIComponent(product.category)}&id=${encodeURIComponent(product.id)}`;
+
+
+    // ===========================================
+    // Product Card HTML
+    // ===========================================
+
+    return `
+        <article class="product-card"
+                 data-condition="${filterCondition}"
+                 data-price="${price}">
 
             <div class="card-image-box">
 
@@ -75,6 +136,7 @@ function createProductCard(product) {
 
             </div>
 
+
             <div class="card-body">
 
                 <div class="card-info">
@@ -94,6 +156,7 @@ function createProductCard(product) {
                     </p>
 
                 </div>
+
 
                 <div class="card-footer">
 

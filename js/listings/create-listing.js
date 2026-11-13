@@ -1,10 +1,13 @@
 
 import { auth } from '../auth/firebase-config.js';
 
-import { onAuthStateChanged }
-from 'https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js';
+import { onAuthStateChanged } from
+    'https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js';
 
+// =====================================================
 // HTML Elements
+// =====================================================
+
 const form = document.getElementById('give-form');
 const message = document.getElementById('form-message');
 const submit = document.getElementById('submit-button');
@@ -15,22 +18,33 @@ const preview = document.getElementById('photo-preview');
 const description = document.getElementById('description');
 const price = document.getElementById('price');
 
+// Location Elements
+const postalCodeInput = document.getElementById('postal_code');
+const prefectureInput = document.getElementById('prefecture');
+const cityInput = document.getElementById('city');
+const postalMessage = document.getElementById('postal-message');
+
 let currentUser = null;
 let previewURLs = [];
+let postalRequestId = 0;
 
+// =====================================================
 // Backend API
-// Backend API
-const API_URL = "https://dozo-xslw.onrender.com/api/products";
+// =====================================================
+
+const API_URL = 'https://dozo-xslw.onrender.com/api/products';
+
+// =====================================================
 // Authentication Check
+// =====================================================
+
 onAuthStateChanged(auth, user => {
 
     currentUser = user;
 
     if (!user) {
 
-        message.textContent =
-            '出品するにはログインしてください。';
-
+        message.textContent = '出品するにはログインしてください。';
         submit.disabled = true;
 
         setTimeout(() => {
@@ -47,7 +61,101 @@ onAuthStateChanged(auth, user => {
 
 });
 
+// =====================================================
+// Postal Code Search
+// =====================================================
+
+if (postalCodeInput) {
+
+    postalCodeInput.addEventListener('input', async () => {
+
+        // Remove hyphen and non-numeric characters
+        const postalCode = postalCodeInput.value.replace(/\D/g, '');
+
+        // Wait until 7 digits are entered
+        if (postalCode.length !== 7) {
+
+            prefectureInput.value = '';
+            cityInput.value = '';
+
+            if (postalMessage) {
+                postalMessage.textContent =
+                    postalCode.length === 0
+                        ? ''
+                        : '郵便番号を7桁入力してください。';
+            }
+
+            return;
+        }
+
+        // Prevent old requests from overwriting new results
+        const requestId = ++postalRequestId;
+
+        if (postalMessage) {
+            postalMessage.textContent = '住所を検索しています…';
+        }
+
+        try {
+
+            const url =
+                `https://zipcloud.ibsnet.co.jp/api/search?zipcode=${postalCode}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error('住所検索に失敗しました。');
+            }
+
+            const data = await response.json();
+
+            // Ignore outdated responses
+            if (requestId !== postalRequestId) return;
+
+            if (
+                data.status !== 200 ||
+                !data.results ||
+                data.results.length === 0
+            ) {
+
+                prefectureInput.value = '';
+                cityInput.value = '';
+
+                if (postalMessage) {
+                    postalMessage.textContent =
+                        '該当する住所が見つかりませんでした。';
+                }
+
+                return;
+            }
+
+            // Get the first matching address
+            const address = data.results[0];
+
+            prefectureInput.value = address.address1;
+            cityInput.value = address.address2;
+
+            if (postalMessage) {
+                postalMessage.textContent =
+                    '住所を自動入力しました。';
+            }
+
+        } catch (error) {
+
+            console.error('Postal code search error:', error);
+
+            if (postalMessage) {
+                postalMessage.textContent =
+                    '住所を検索できませんでした。もう一度お試しください。';
+            }
+        }
+
+    });
+}
+
+// =====================================================
 // Description Character Counter
+// =====================================================
+
 description.addEventListener('input', () => {
 
     document.getElementById('description-count')
@@ -55,7 +163,10 @@ description.addEventListener('input', () => {
 
 });
 
+// =====================================================
 // Price Hint
+// =====================================================
+
 price.addEventListener('input', () => {
 
     document.getElementById('price-hint').textContent =
@@ -65,7 +176,10 @@ price.addEventListener('input', () => {
 
 });
 
+// =====================================================
 // Image Preview
+// =====================================================
+
 photoInput.addEventListener('change', () => {
 
     previewURLs.forEach(url => URL.revokeObjectURL(url));
@@ -95,7 +209,10 @@ photoInput.addEventListener('change', () => {
 
 });
 
+// =====================================================
 // Form Submission
+// =====================================================
+
 form.addEventListener('submit', async event => {
 
     event.preventDefault();
@@ -106,12 +223,26 @@ form.addEventListener('submit', async event => {
     if (!currentUser) {
 
         message.textContent = 'ログインしてください。';
-
         return;
     }
 
     // HTML Validation
     if (!form.reportValidity()) return;
+
+    // Check Postal Code
+    const postalCode = postalCodeInput.value.replace(/\D/g, '');
+
+    if (
+        postalCode.length !== 7 ||
+        !prefectureInput.value ||
+        !cityInput.value
+    ) {
+
+        message.textContent =
+            '正しい郵便番号を入力して住所を確認してください。';
+
+        return;
+    }
 
     const files = [...photoInput.files];
 
@@ -183,6 +314,20 @@ form.addEventListener('submit', async event => {
 
         formData.append('price', amount);
 
+        // Location Information
+        formData.append('postal_code', postalCode);
+
+        formData.append(
+            'prefecture',
+            prefectureInput.value
+        );
+
+        formData.append(
+            'city',
+            cityInput.value
+        );
+
+        // Keep the existing pickup location field
         formData.append(
             'location',
             form.elements.location.value.trim()
@@ -200,11 +345,8 @@ form.addEventListener('submit', async event => {
 
         // Send to Node.js Backend
         const response = await fetch(API_URL, {
-
             method: 'POST',
-
             body: formData
-
         });
 
         // Read Server Response
@@ -247,7 +389,6 @@ form.addEventListener('submit', async event => {
         preview.replaceChildren();
 
         previewURLs.forEach(url => URL.revokeObjectURL(url));
-
         previewURLs = [];
 
         document.getElementById('description-count')
@@ -256,11 +397,13 @@ form.addEventListener('submit', async event => {
         document.getElementById('price-hint')
             .textContent = '¥0 は「無料」として出品されます。';
 
+        if (postalMessage) {
+            postalMessage.textContent = '';
+        }
+
         // Redirect
         setTimeout(() => {
-
             location.assign('auth/profile.html');
-
         }, 1300);
 
     } catch (error) {
