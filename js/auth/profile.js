@@ -33,12 +33,19 @@ const userName = document.getElementById("user-name");
 const userEmail = document.getElementById("user-email");
 const userId = document.getElementById("user-id");
 
+// New Dashboard Elements
+const sidebarUserName = document.getElementById("sidebar-user-name");
+const accountUserName = document.getElementById("user-name-display");
+
 const profileContent = document.getElementById("profile-content");
 const profileMessage = document.getElementById("profile-message");
 
 const logoutButton = document.getElementById("logout-button");
 
 const productContainer = document.getElementById("my-products");
+// Recent Products Element
+const recentProductsContainer =
+    document.getElementById("recent-products");
 
 const totalProductsElement = document.getElementById("total-products");
 const totalValueElement = document.getElementById("total-value");
@@ -56,22 +63,40 @@ onAuthStateChanged(auth, async (user) => {
 
     // User is not logged in
     if (!user) {
-        window.location.replace("login.html");
-        return;
-    }
+    window.location.replace("../login.html");
+    return;
+}
 
-    // Display user information
-    if (userName) {
-        userName.textContent = user.displayName || "ユーザー";
-    }
+    
+// Display user information
 
-    if (userEmail) {
-        userEmail.textContent = user.email || "";
-    }
+const displayName = user.displayName || "ユーザー";
 
-    if (userId) {
-        userId.textContent = user.uid;
-    }
+// Welcome Message
+if (userName) {
+    userName.textContent = displayName;
+}
+
+// Sidebar User Name
+if (sidebarUserName) {
+    sidebarUserName.textContent = displayName;
+}
+
+// Account Information
+if (accountUserName) {
+    accountUserName.textContent = displayName;
+}
+
+// Email
+if (userEmail) {
+    userEmail.textContent = user.email || "";
+}
+
+// User ID
+if (userId) {
+    userId.textContent = user.uid;
+}
+
 
     // Show profile content
     if (profileContent) {
@@ -176,6 +201,9 @@ async function loadDashboard(uid) {
         // ------------------------------------------
 
         displayProducts(products, uid);
+
+        // Display Recent 5 Products
+        displayRecentProducts(products);
 
 
         if (profileMessage) {
@@ -479,6 +507,106 @@ function displayProducts(products, uid) {
 }
 
 
+/* ==========================================
+   Display Recent 5 Products
+========================================== */
+
+function displayRecentProducts(products) {
+
+    if (!recentProductsContainer) {
+        return;
+    }
+
+    recentProductsContainer.replaceChildren();
+
+    // No products
+    if (!products || products.length === 0) {
+
+        const message = document.createElement("p");
+
+        message.textContent =
+            "まだ出品商品がありません。";
+
+        recentProductsContainer.appendChild(message);
+
+        return;
+    }
+
+    // Get first 5 products from API response
+    const recentProducts = products.slice(0, 5);
+
+    recentProducts.forEach(product => {
+
+        const item = document.createElement("article");
+
+        item.className = "recent-product-item";
+
+        // Product Image
+        const image = document.createElement("img");
+
+        const firstImage =
+            product.images?.[0] || product.image_url;
+
+        image.src = firstImage
+            ? firstImage.startsWith("http")
+                ? firstImage
+                : `${API_BASE}${firstImage}`
+            : "";
+
+        image.alt = product.title || "商品写真";
+        image.className = "recent-product-image";
+        image.loading = "lazy";
+
+        // Product Information
+        const info = document.createElement("div");
+
+        info.className = "recent-product-info";
+
+        const title = document.createElement("h3");
+
+        title.textContent =
+            product.title || "商品名なし";
+
+        const price = document.createElement("p");
+
+        price.textContent = formatPrice(product.price);
+
+        info.append(title, price);
+
+        // Product Status
+        const status = document.createElement("span");
+
+        status.className =
+            `recent-product-status status-${product.status || "active"}`;
+
+        const statusLabels = {
+            active: "出品中",
+            reserved: "取り置き中",
+            sold: "売却・譲渡済み"
+        };
+
+        status.textContent =
+            statusLabels[product.status] || "出品中";
+
+        // View Details
+        item.addEventListener("click", () => {
+
+            const url =
+                `../product-details.html?id=${encodeURIComponent(product.id)}&category=${encodeURIComponent(product.category || "")}&source=profile`;
+
+            window.location.href = url;
+
+        });
+
+        item.append(image, info, status);
+
+        recentProductsContainer.appendChild(item);
+
+    });
+
+}
+
+
 // --------------------------------------------------
 // 7. Price Format
 // --------------------------------------------------
@@ -508,9 +636,9 @@ if (logoutButton) {
 
             await signOut(auth);
 
-            console.log("Logout Successful!");
+console.log("Logout Successful!");
 
-            window.location.replace("login.html");
+window.location.replace("../login.html");
 
         } catch (error) {
 

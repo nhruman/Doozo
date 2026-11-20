@@ -1,0 +1,50 @@
+
+/* =========================================
+   Mottainai Connect - Give Item Page
+   ========================================= */
+
+.give-item-page {
+    --lf-green: #2f9e6e;
+    --lf-green-dark: #1f7a53;
+    --lf-green-soft: #e8f6ef;
+    --lf-ink: #1f2d27;
+    --lf-muted: #6b7a73;
+    --lf-line: #dce6e0;
+    --lf-bg: #f4f9f6;
+    --lf-card: #ffffff;
+    --lf-danger: #d64545;
+    --lf-radius: 18px;
+
+    background: var(--lf-bg);
+    color: var(--lf-ink);
+    font-family: "Zen Maru Gothic", "Noto Sans JP", sans-serif;
+    line-height: 1.7;
+
+    /* Fixed Navbar spacing */
+    padding-top: 30px;
+}
+
+/* Intro Section */
+.give-item-page .lf-intro {
+    position: relative;
+    z-index: 1;
+    margin-top: 0;
+}
+
+/* Intro Content */
+.give-item-page .lf-intro-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Intro Heading */
+.give-item-page .lf-intro h1 {
+    margin-top: 0;
+    line-height: 1.6;
+}
+
+/* Main Content */
+.give-item-page .lf-shell {
+    position: relative;
+    z-index: 1;
+}

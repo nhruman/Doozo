@@ -395,6 +395,58 @@
 }
 
 
+/* =========================================
+   Shared Navbar Font
+========================================= */
+
+#site-header {
+    font-family: "Noto Sans JP", "Noto Sans", sans-serif;
+}
+
+#site-header *:not(i):not(.fa-solid):not(.fa-regular):not(.fa-brands) {
+    font-family: inherit;
+}
+
+/* =========================================
+   Font Awesome Icons
+========================================= */
+
+#site-header i.fa-solid,
+#site-header i.fa-regular {
+    font-family: "Font Awesome 6 Free" !important;
+}
+
+#site-header i.fa-brands {
+    font-family: "Font Awesome 6 Brands" !important;
+}
+
+#site-header i.fa-solid {
+    font-weight: 900;
+}
+
+#site-header i.fa-regular {
+    font-weight: 400;
+}
+
+#site-header .main-header {
+    background: linear-gradient(
+        135deg,
+        #166534 0%,
+        #14532d 100%
+    );
+    color: #ffffff;
+}
+
+#site-header .nav-center a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+#site-header .nav-center a.is-active {
+    color: #166534 !important;
+    background: #ffffff;
+    text-decoration: none;
+}
 /* =========================================================
    Mobile
    ========================================================= */
@@ -405,7 +457,7 @@
         padding: 8px 12px;
     }
 
-    /* Logo ছোট করা */
+    /* Logo small */
     .main-header .logo img {
         height: 36px;
     }

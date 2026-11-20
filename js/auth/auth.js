@@ -40,8 +40,8 @@ loginForm.addEventListener("submit", async (event) => {
         message.style.color = "green";
         message.textContent = "ログインしました！";
 
-        // Login সফল হলে Profile Page-এ যাবে
-        window.location.href = "profile.html";
+        /// Login সফল হলে নতুন Dashboard-এ যাবে
+window.location.href = "../profile/dashboard.html";
 
     } catch (error) {
 

@@ -54,32 +54,6 @@
 }
 
 /* ---------- 2. Shared header helpers ---------- */
-/* Make the shared header readable on this light page:
-   solid forest-green bar + white text.
-   (If your header is meant to be white with dark text, see the note below.) */
-#site-header,
-#site-header > * {
-  background: var(--rc-forest);
-}
-#site-header a,
-#site-header .logo-text,
-#site-header .logo-icon,
-#site-header i {
-  color: #ffffff;
-}
-/* ALTERNATIVE (white bar + dark text): replace the two blocks above with
-   #site-header, #site-header > * { background: #ffffff; box-shadow: 0 1px 0 #e2e8f0; }
-   #site-header a, #site-header .logo-text, #site-header .logo-icon, #site-header i { color: #1e293b; }
-*/
-
-/* Underline the current page without touching the header's own colours */
-#site-header a[aria-current="page"] {
-  font-weight: 700;
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 8px;
-}
-
 /* Only used if js/components.js did not insert a header */
 .rc-fallback-header {
   display: flex;

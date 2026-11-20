@@ -22,7 +22,7 @@ onAuthStateChanged(auth, (user) => {
         // Desktop Header
         if (accountLink) {
 
-            accountLink.href = "auth/profile.html";
+            accountLink.href = "profile/dashboard.html";
 
             accountLink.innerHTML = `
                 <i class="fa-solid fa-user-check"></i>
@@ -35,7 +35,7 @@ onAuthStateChanged(auth, (user) => {
         // Mobile Header
         if (mobileAccount) {
 
-            mobileAccount.href = "auth/profile.html";
+           mobileAccount.href = "profile/dashboard.html";
 
             mobileAccount.textContent = "マイページ";
 

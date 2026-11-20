@@ -1,0 +1,437 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Dashboard | Mottainai Connect</title>
+
+    <!-- Existing authentication styles -->
+    <link rel="stylesheet" href="../css/auth.css">
+
+    <!-- New Dashboard styles -->
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body class="profile-page">
+
+    <div class="mc-dashboard">
+
+        <!-- Dashboard Content: hidden until authentication -->
+        <div id="profile-content" class="dashboard-shell" hidden>
+
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar" id="dashboard-sidebar">
+
+                <a href="../index.html" class="dashboard-brand">
+                    <span class="brand-icon">🌱</span>
+                    <span>Mottainai <strong>Connect</strong></span>
+                </a>
+
+                <div class="sidebar-user">
+                    <div class="sidebar-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div class="sidebar-user-info">
+                        <strong id="sidebar-user-name">User</strong>
+                        <span>Member Account</span>
+                    </div>
+                </div>
+
+                <nav class="sidebar-nav">
+
+                    <p class="sidebar-heading">MAIN MENU</p>
+
+                    <a href="#overview" class="sidebar-link active">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>ダッシュボード</span>
+                        <small>Overview</small>
+                    </a>
+
+                    <a href="#products" class="sidebar-link">
+                        <i class="fa-solid fa-box"></i>
+                        <span>商品管理</span>
+                        <small>My Products</small>
+                    </a>
+
+                    <a href="#transactions" class="sidebar-link">
+                        <i class="fa-solid fa-repeat"></i>
+                        <span>取引管理</span>
+                        <small>Transactions</small>
+                    </a>
+
+                    <a href="#reviews" class="sidebar-link">
+                        <i class="fa-solid fa-star"></i>
+                        <span>評価・レビュー</span>
+                        <small>Reviews</small>
+                    </a>
+
+                    <a href="#favorites" class="sidebar-link">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>お気に入り</span>
+                        <small>Favorites</small>
+                    </a>
+
+                    <a href="#history" class="sidebar-link">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>利用履歴</span>
+                        <small>History</small>
+                    </a>
+
+                    <p class="sidebar-heading settings-heading">SETTINGS</p>
+
+                    <a href="#profile-settings" class="sidebar-link">
+                        <i class="fa-solid fa-user-gear"></i>
+                        <span>プロフィール設定</span>
+                        <small>Profile</small>
+                    </a>
+
+                    <a href="#account-settings" class="sidebar-link">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>アカウント設定</span>
+                        <small>Account Settings</small>
+                    </a>
+
+                </nav>
+
+                <div class="sidebar-bottom">
+
+                    <a href="../index.html" class="sidebar-home">
+                        <i class="fa-solid fa-house"></i>
+                        ホームに戻る
+                    </a>
+
+                    <!-- Keep this ID for existing profile.js -->
+                    <button id="logout-button" class="sidebar-logout" type="button">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        ログアウト / Logout
+                    </button>
+
+                </div>
+
+            </aside>
+
+
+            <!-- Main Area -->
+            <div class="dashboard-main-area">
+
+                <!-- Top Header -->
+                <header class="dashboard-topbar">
+
+                    <button id="sidebar-toggle"
+                        class="sidebar-toggle"
+                        type="button"
+                        aria-label="Toggle menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <div class="topbar-title">
+                        <span>MY ACCOUNT</span>
+                        <h1>マイダッシュボード</h1>
+                    </div>
+
+                    <div class="topbar-right">
+                        <span class="member-badge">
+                            <i class="fa-solid fa-leaf"></i>
+                            Mottainai Member
+                        </span>
+                    </div>
+
+                </header>
+
+
+                <!-- Dashboard Content -->
+                <main class="dashboard-content">
+
+                    <!-- Overview -->
+                    <section class="dashboard-welcome">
+
+                        <div>
+                            <p class="dashboard-eyebrow">
+                                YOUR PERSONAL DASHBOARD
+                            </p>
+
+                            <h2>
+                                こんにちは、
+                                <span id="user-name">User</span> さん！ 👋
+                            </h2>
+
+                            <p class="welcome-description">
+                                あなたのMottainai活動を管理しましょう。
+                                <br>
+                                Manage your products and activities in one place.
+                            </p>
+                        </div>
+
+                        <a href="../give-item.html" class="add-product-button">
+                            <i class="fa-solid fa-plus"></i>
+                            商品を出品する / Add Product
+                        </a>
+
+                    </section>
+
+
+                    <!-- Account Information -->
+                    <details class="account-details">
+
+                        <summary>
+                            <i class="fa-solid fa-circle-user"></i>
+                            アカウント情報 / Account Information
+                        </summary>
+
+                        <div class="account-info-grid">
+
+                            <div>
+                                <span>お名前 / Name</span>
+                                <strong id="user-name-display"></strong>
+                            </div>
+
+                            <div>
+                                <span>メールアドレス / Email</span>
+                                <strong id="user-email"></strong>
+                            </div>
+
+                            <div>
+                                <span>ユーザーID / User ID</span>
+                                <strong id="user-id"></strong>
+                            </div>
+
+                        </div>
+
+                    </details>
+
+
+                    <!-- Statistics -->
+                    <section id="overview" class="dashboard-overview">
+
+                        <div class="section-heading">
+                            <div>
+                                <h2>活動状況 / Overview</h2>
+                                <p>あなたの出品・販売状況を確認できます。</p>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-stats">
+
+                            <article class="stat-card">
+                                <div class="stat-top">
+                                    <span class="stat-icon green">📦</span>
+                                    <span class="stat-label">TOTAL LISTINGS</span>
+                                </div>
+
+                                <p id="total-products" class="stat-number">0</p>
+                                <span class="stat-description">出品商品 / My Products</span>
+                            </article>
+
+
+                            <article class="stat-card">
+                                <div class="stat-top">
+                                    <span class="stat-icon blue">💴</span>
+                                    <span class="stat-label">LISTING VALUE</span>
+                                </div>
+
+                                <p id="total-value" class="stat-number">¥0</p>
+                                <span class="stat-description">出品総額 / Total Value</span>
+                            </article>
+
+
+                            <article class="stat-card">
+                                <div class="stat-top">
+                                    <span class="stat-icon orange">✓</span>
+                                    <span class="stat-label">COMPLETED</span>
+                                </div>
+
+                                <p id="sold-products" class="stat-number">0</p>
+                                <span class="stat-description">売却・譲渡済み / Completed</span>
+                            </article>
+
+
+                            <article class="stat-card">
+                                <div class="stat-top">
+                                    <span class="stat-icon purple">📈</span>
+                                    <span class="stat-label">TOTAL SALES</span>
+                                </div>
+
+                                <p id="total-sales" class="stat-number">¥0</p>
+                                <span class="stat-description">売上合計 / Total Sales</span>
+                            </article>
+
+                        </div>
+
+                    </section>
+
+
+<!-- Recent Products -->
+<section class="recent-products-section">
+
+    <div class="recent-products-heading">
+        <div>
+            <h2>最近の出品商品 / Recent Products</h2>
+            <p>最近出品した商品を確認できます。</p>
+        </div>
+
+        <a href="#products" class="recent-view-all">
+            すべて見る / View All
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <!-- JavaScript will display the latest products here -->
+    <div id="recent-products" class="recent-products-list">
+        <p>商品を読み込んでいます...</p>
+    </div>
+
+</section>
+
+                    <!-- Reuse Activity -->
+                    <section class="reuse-banner">
+
+                        <div class="reuse-icon">
+                            <i class="fa-solid fa-earth-asia"></i>
+                        </div>
+
+                        <div>
+                            <h3>Mottainai Activity</h3>
+                            <p>
+                                不要なものを、必要な人へ。
+                                <br>
+                                Give items a second life. Reduce waste together.
+                            </p>
+                        </div>
+
+                    </section>
+
+
+                    <!-- Product Management -->
+                    <section id="products" class="products-section">
+
+                        <div class="products-heading">
+
+                            <div>
+                                <h2>自分の出品商品 / My Products</h2>
+                                <p>現在出品している商品の一覧です。</p>
+                            </div>
+
+                            <a href="../give-item.html" class="secondary-add-button">
+                                ＋ 新しい商品 / Add New
+                            </a>
+
+                        </div>
+
+                        <!-- Existing profile.js renders product cards here -->
+                        <div id="my-products" class="my-products-grid"></div>
+
+                    </section>
+
+
+                    <!-- Future Features -->
+                    <section id="transactions" class="future-section">
+                        <div class="future-icon">
+                            <i class="fa-solid fa-repeat"></i>
+                        </div>
+                        <div>
+                            <h2>取引管理 / Transactions</h2>
+                            <p>取引の申請・進行状況をここで管理できるようにします。</p>
+                            <span>Coming Soon</span>
+                        </div>
+                    </section>
+
+
+                    <section id="reviews" class="future-section">
+                        <div class="future-icon">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+                        <div>
+                            <h2>評価・レビュー / Reviews</h2>
+                            <p>取引相手からの評価やレビューを確認できるようにします。</p>
+                            <span>Coming Soon</span>
+                        </div>
+                    </section>
+
+
+                    <section id="favorites" class="future-section">
+                        <div class="future-icon">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                        <div>
+                            <h2>お気に入り / Favorites</h2>
+                            <p>お気に入りに登録した商品を確認できるようにします。</p>
+                            <span>Coming Soon</span>
+                        </div>
+                    </section>
+
+
+                    <section id="history" class="future-section">
+                        <div class="future-icon">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+                        <div>
+                            <h2>利用履歴 / History</h2>
+                            <p>これまでの譲渡・購入履歴を確認できるようにします。</p>
+                            <span>Coming Soon</span>
+                        </div>
+                    </section>
+
+
+                    <section id="profile-settings" class="future-section">
+                        <div class="future-icon">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <div>
+                            <h2>プロフィール設定 / Profile</h2>
+                            <p>名前やプロフィール情報を管理できるようにします。</p>
+                            <span>Coming Soon</span>
+                        </div>
+                    </section>
+
+
+                    <section id="account-settings" class="future-section">
+                        <div class="future-icon">
+                            <i class="fa-solid fa-gear"></i>
+                        </div>
+                        <div>
+                            <h2>アカウント設定 / Account Settings</h2>
+                            <p>メールアドレスやパスワードなどを管理できるようにします。</p>
+                            <span>Coming Soon</span>
+                        </div>
+                    </section>
+
+                </main>
+
+
+                <!-- Footer -->
+                <footer class="dashboard-footer">
+                    <p>© 2026 Mottainai Connect. Reuse More, Waste Less.</p>
+                </footer>
+
+            </div>
+
+        </div>
+
+
+        <!-- Loading / Error Message -->
+        <p id="profile-message"
+            class="profile-message"
+            role="status"
+            aria-live="polite">
+            読み込み中... / Loading...
+        </p>
+
+    </div>
+
+
+    <!-- Existing Firebase Authentication and Product Management -->
+    <script type="module" src="../js/auth/profile.js"></script>
+
+    <!-- New Dashboard Controller -->
+    <script type="module" src="js/dashboard/dashboard.js"></script>
+
+</body>
+</html>

@@ -23,7 +23,7 @@
             <nav class="navbar" aria-label="Main navigation">
 
                 <div class="nav-center">
-                    <a href="give-item.html"data-i18n="nav.give">あげる／売る</a>
+                    <a href="give-item.html" data-i18n="nav.give">あげる／売る</a>
                     <a href="receive-item.html"data-i18n="nav.receive">もらう／買う</a>
                 </div>
 
@@ -84,7 +84,7 @@
         <div class="mobile-nav" id="mobile-nav">
 
             <a href="give-item.html" data-i18n="nav.give">あげる／売る</a>
-            <a href="receive-item.html"data-i18n="nav.receive">もらう／買う</a>
+            <a href="receive-item.html" data-i18n="nav.receive">もらう／買う</a>
             <a href="auth/login.html"id="mobile-account-link"data-i18n="nav.login">ログイン</a>
         </div>
     </header>`;

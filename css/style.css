@@ -1,3 +1,15 @@
+   /* =================================
+   Global Font Settings
+   Mottainai Connect
+================================= */
+
+body {
+    font-family: "Noto Sans JP", "Noto Sans", sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #333333;
+}
+
 /* ==========================================================================
    Mottainai Connect ― メインスタイルシート
    設計思想:
@@ -30,9 +42,10 @@
     --ink-soft: #5a685f;
     --line: #e1e8e0;
 
+ 
     /* フォント */
-    --font-display: 'Zen Maru Gothic', 'Noto Sans JP', 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Noto Sans SC', 'Noto Sans Tamil', 'Noto Sans Myanmar', 'Noto Sans KR', 'Noto Sans', sans-serif;
-    --font-body: 'Noto Sans JP', 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Noto Sans SC', 'Noto Sans Tamil', 'Noto Sans Myanmar', 'Noto Sans KR', 'Noto Sans', sans-serif;
+    --font-display: 'Noto Sans JP', "Noto Sans", "sans-serif", 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Noto Sans SC', 'Noto Sans Tamil', 'Noto Sans Myanmar', 'Noto Sans KR', 'Noto Sans', sans-serif;
+    --font-body: 'Noto Sans JP', "Noto Sans", "sans-serif", 'Noto Sans Bengali', 'Noto Sans Devanagari', 'Noto Sans SC', 'Noto Sans Tamil', 'Noto Sans Myanmar', 'Noto Sans KR', 'Noto Sans', sans-serif;
 
     /* 余白・角丸 */
     --radius-sm: 8px;
